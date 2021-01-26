@@ -5,6 +5,8 @@ from django.db import models
 
 
 class UserManager(BaseUserManager):
+    """Кастомный менеджер юсера"""
+
     def _create_user(self, username, email, password, **kwargs):
         if not username:
             raise ValueError('Username is required')
@@ -29,6 +31,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
+    """Моделька юсера"""
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=100, blank=True)
@@ -37,9 +40,11 @@ class User(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
     activation_code = models.CharField(max_length=50, blank=True)
 
+    # поля по которым будут логин
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
 
+    # вызываем кастомный юсерменеджар для юсера
     objects = UserManager()
 
     def create_activation_code(self):
