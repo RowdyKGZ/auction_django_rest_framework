@@ -1,5 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
+
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 import json
@@ -7,9 +7,10 @@ import json
 import stripe
 from rest_framework.decorators import api_view
 
+from auction_kg import settings
 from order.models import Order
 
-stripe.api_key = 'sk_test_51IEBPPDZRvpYWmJuPHtem9eS2yH9bG4qjZgh9efjF3Dv10vaBP6iLUuVVvOI4ytQlcuU2DCqLQvuzaKOHaAEfhEB005ZN8D0CG'
+stripe.api_key = settings.STRIPE_API_KEY
 stripe.log = 'info'  # or 'debug'
 
 # How it works - in 3 steps:
