@@ -10,7 +10,7 @@ from .filters import ProductFilter
 from .models import Product, Category, MainComment
 from .serializers import ProductSerializer, CategorySerializer, CreateUpdateProductSerializer, \
     MainCommentSerializer, ProductListSerializer
-from .permissions import IsOwnerUser
+from .permissions import IsOwner, IsAuthor
 
 
 class MyPagination(PageNumberPagination):
@@ -28,7 +28,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'list':
             return ProductListSerializer
-        if self.action == 'retrive':
+        if self.action == 'retrieve':
             return ProductSerializer
         else:
             return CreateUpdateProductSerializer
@@ -56,19 +56,21 @@ class CategoryList(ListAPIView):
     serializer_class = CategorySerializer
 
 
-class MainCommentViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin,
-                         viewsets.GenericViewSet):
+class MainCommentViewSet(mixins.CreateModelMixin,
+                        mixins.DestroyModelMixin,
+                        mixins.UpdateModelMixin,
+                        viewsets.GenericViewSet):
 
     queryset = MainComment.objects.all().order_by('-created')
     serializer_class = MainCommentSerializer
-    permission_classes = [per.IsAdminUser, IsOwnerUser]
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
+
     def get_permissions(self):
-        if self.action == 'create':
-            permissions = [per.IsAuthenticated]
-        elif self.action == ['destroy', 'update', 'partial_update']:
-            permissions = [IsOwnerUser]
-        return [permission() for permission in permissions]
+        if self.action in ['destroy', 'update', 'partial_update']:
+            permission = [IsAuthor]
+        else:
+            permission = [per.IsAuthenticated, ]
+        return [permission() for permission in permission]
