@@ -6,7 +6,7 @@ def send_activation_email(user):
     subject = 'Спасибо за регистрацию на нашем сайте'
     body = 'Спасибо за регистрацию на нашем сайте\n' \
            'Для активаций аккаунта перейдите по ссылке ниже\n' \
-           f'http://127.0.0.1:8000/v1/account/activate/{user.activation_code}/'
+           f'https://127.0.0.1:8000/v1/account/activate/{user.activation_code}/'
     from_email = 'e-shop@django.kg'
     recepients = [user.email]
     send_mail(subject=subject, message=body, from_email=from_email, recipient_list=recepients, fail_silently=False)
