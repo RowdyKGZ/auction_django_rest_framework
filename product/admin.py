@@ -13,8 +13,8 @@ class ImageInline(admin.TabularInline):
 class CommentInLine(admin.TabularInline):
     """подключить инлайново коментарии к продукту в админке"""
     model = Comment
-    extra = 3
-    fields = ('comment',)
+    extra = 2
+    fields = ('text',)
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -26,3 +26,4 @@ class ProductAdmin(admin.ModelAdmin):
 
 admin.site.register(Category)
 admin.site.register(Product, ProductAdmin)
+# admin.site.register(Comment)
