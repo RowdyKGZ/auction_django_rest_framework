@@ -2,14 +2,15 @@ from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView, CreateAPIView
-from rest_framework import permissions as per, viewsets, status
+from rest_framework import permissions as per, viewsets, status, mixins
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from .filters import ProductFilter
-from .models import Product, Category, Comment
+from .models import Product, Category, MainComment
 from .serializers import ProductSerializer, CategorySerializer, CreateUpdateProductSerializer, \
-    CommentSerializer, ProductListSerializer
+    MainCommentSerializer, ProductListSerializer
+from .permissions import IsOwnerUser
 
 
 class MyPagination(PageNumberPagination):
@@ -44,7 +45,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         q = request.query_params.get('q')
         queryset = self.get_queryset()
         if q is not None:
-            queryset = queryset.filter(Q(title__icontains=q) | Q(description___icontains=q))
+            queryset = queryset.filter(Q(title__icontains=q) | Q(description__icontains=q))
         serializer = ProductSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -55,11 +56,19 @@ class CategoryList(ListAPIView):
     serializer_class = CategorySerializer
 
 
-class CommentCreate(CreateAPIView):
-    """Создание комментов"""
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_classes = [per.IsAuthenticated]
+class MainCommentViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin,
+                         viewsets.GenericViewSet):
+
+    queryset = MainComment.objects.all().order_by('-created')
+    serializer_class = MainCommentSerializer
+    permission_classes = [per.IsAdminUser, IsOwnerUser]
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+    def get_permissions(self):
+        if self.action == 'create':
+            permissions = [per.IsAuthenticated]
+        elif self.action == ['destroy', 'update', 'partial_update']:
+            permissions = [IsOwnerUser]
+        return [permission() for permission in permissions]

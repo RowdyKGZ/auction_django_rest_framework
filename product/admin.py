@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Product, ProductImage, Comment
+from .models import Category, Product, ProductImage, MainComment
 
 
 class ImageInline(admin.TabularInline):
@@ -12,7 +12,7 @@ class ImageInline(admin.TabularInline):
 
 class CommentInLine(admin.TabularInline):
     """подключить инлайново коментарии к продукту в админке"""
-    model = Comment
+    model = MainComment
     extra = 2
     fields = ('text',)
 
@@ -26,4 +26,4 @@ class ProductAdmin(admin.ModelAdmin):
 
 admin.site.register(Category)
 admin.site.register(Product, ProductAdmin)
-# admin.site.register(Comment)
+admin.site.register(MainComment)

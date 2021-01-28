@@ -5,8 +5,8 @@ from product.models import Product
 
 class ProductFilter(django_filters.FilterSet):
     """Фильтрация"""
-    price_from = django_filters.NumberFilter(field_name='price', lookup_expr='gt')
-    price_to = django_filters.NumberFilter(field_name='price', lookup_expr='lt')
+    price_from = django_filters.NumberFilter(field_name='price', lookup_expr='gte')
+    price_to = django_filters.NumberFilter(field_name='price', lookup_expr='lte')
 
     class Meta:
         model = Product

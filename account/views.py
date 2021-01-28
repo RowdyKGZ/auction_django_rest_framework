@@ -53,5 +53,5 @@ class ProfileViewSet(mixins.RetrieveModelMixin,
     serializer_class = ProfileSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerAccount]
 
-    # def get_object(self):
-    #     return self.request.user
+    def get_object(self):
+        return self.request.user

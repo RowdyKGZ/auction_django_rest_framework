@@ -60,12 +60,11 @@ class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
 
 
-class Comment(models.Model):
-    """Коменты к продукту"""
+class MainComment(models.Model):
+    text = models.CharField(max_length=500)
+    created = models.DateTimeField(auto_now_add=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='comments')
-    text = models.TextField()
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='comments')
-    create_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f'Коментарий {self.author} для {self.product}, создан {self.create_at}'
+    def str(self):
+        return 'Comment text is: ' + self.text
